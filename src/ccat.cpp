@@ -11,11 +11,12 @@ const int CF_SUCCEES = 0;
 const int CF_ERROR_INVALID_ARGS = -1;
 const int CF_ERROR_NOTEXISTS = -2;
 const int CF_ERROR_OPEN = -3;
+const int CF_INVALID_OFFSET = -4;
+const int CF_INVALID_OFFSET_AROUND = -5;
 
 enum outFormat {
   RAW,
-  HEX,
-  B64
+  HEX
 };
 
 struct inFileData {
@@ -28,7 +29,7 @@ struct inFileData {
 
 inFileData readFileData(int argc, char*argv[]) {
   inFileData fileData;
-  fileData.offsetPos = 0;
+  fileData.offsetPos = -1;
   fileData.offsetAround = 0;
   fileData.printFormat = outFormat::RAW;
   fileData.isComplete = false;
@@ -36,18 +37,19 @@ inFileData readFileData(int argc, char*argv[]) {
     string argument {argv[i]};
     if (argument.substr(0,3) == "-o:")
       fileData.offsetPos = stol(argument.substr(3, argument.length()));
-    else if (argument.substr(0,3) == "-a:")
+    else if (argument.substr(0,3) == "-a:") {
       fileData.offsetAround = stol(argument.substr(3, argument.length()));
+      if (fileData.offsetAround < 0)
+	fileData.offsetAround *= -1;
+    }
     else if (argument.substr(0,3) == "-RAW")
       fileData.printFormat = outFormat::RAW;
     else if (argument.substr(0,3) == "-HEX")
       fileData.printFormat = outFormat::HEX;
-    else if (argument.substr(0,3) == "-B64")
-      fileData.printFormat = outFormat::B64;
     else
       fileData.path = argument;
   }
-  fileData.isComplete = (fileData.offsetPos > 0 && fileData.path.length() > 0);
+  fileData.isComplete = (fileData.offsetPos >= 0 && fileData.path.length() > 0);
   return fileData;
 }
 
@@ -56,13 +58,28 @@ void printHelp() {
 }
 
 int printFileOffset(const inFileData& fileData) {
-  auto cFile = fopen(fileData.path.c_str(), "rb");
-  if (cFile == nullptr) {
+  auto filePtr = fopen(fileData.path.c_str(), "rb");
+  if (filePtr == nullptr) {
     cout << "Cannot open file : \"" << fileData.path << "\"\n";
     return CF_ERROR_OPEN;
   }
-  fclose(cFile);
-  cFile = nullptr;
+  fseek(filePtr, 0, SEEK_END);
+  auto fileSize = ftell(filePtr);
+  if (fileData.offsetPos >= fileSize) {
+    cout << "Invalid given offset : \"" << fileData.offsetPos << "\" at filesize of \"" << fileSize << "\"\n";
+    return CF_INVALID_OFFSET;
+  }
+  long readSize = (2*fileData.offsetAround)+1;
+  if (readSize > 1 && readSize > fileSize) {
+    cout << "Invalid given offset around : \"" << fileData.offsetAround << "\" at filesize of \"" << fileSize << "\"\n";
+    return CF_INVALID_OFFSET_AROUND;
+  }
+  char buffer[readSize+1] = {0};
+  fseek(filePtr, fileData.offsetPos-fileData.offsetAround, SEEK_SET);
+  fread(buffer, sizeof(char), readSize, filePtr);
+  cout << buffer << endl;
+  fclose(filePtr);
+  filePtr = nullptr;
   return CF_SUCCEES;
 }
 
