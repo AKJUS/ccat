@@ -16,7 +16,7 @@ enum outFormat {
 };
 
 struct inFileData {
-  string file;
+  string filePath;
   long startPos;
   long preCount;
   long postCount;
@@ -25,10 +25,10 @@ struct inFileData {
 int main(int argc, char *argv[])
 {
   inFileData fileData;
-  auto cFile = fopen(inFileData.file.c_str(), "rb");
+  auto cFile = fopen(fileData.filePath.c_str(), "rb");
   if (cFile == nullptr) {
-    cout << "Cannot open file : \"" << inFileData.file << "\" !";
-    reutrn CF_ERROR_OPEN;
+    cout << "Cannot open file : \"" << fileData.filePath << "\" !";
+    return CF_ERROR_OPEN;
   }
   fclose(cFile);
   cFile = nullptr;
