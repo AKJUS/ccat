@@ -54,7 +54,7 @@ inFileData readFileData(int argc, char*argv[]) {
 }
 
 void printHelp() {
-  cout << "ccat -o:<offset> -a:<around> -<RAW,HEX,B64> <file> \n";
+  cout << "ccat -o:<offset> -a:<around> -<RAW,HEX> <file> \n";
 }
 
 int printFileOffset(const inFileData& fileData) {
