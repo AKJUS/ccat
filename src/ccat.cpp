@@ -69,20 +69,35 @@ int printFileOffset(const inFileData& fileData) {
     cout << "Invalid given offset : \"" << fileData.offsetPos << "\" at filesize of \"" << fileSize << "\"\n";
     return CF_INVALID_OFFSET;
   }
-  long readSize = (2*fileData.offsetAround)+1;
+
+  long calcAroundLeft {fileData.offsetAround};
+  long calcAroundRight {fileData.offsetAround};
+
+  if (fileData.offsetPos-calcAroundLeft < 0) {
+    calcAroundLeft -= ( (fileData.offsetPos-calcAroundLeft)  * -1 ); 
+  }
+
+  if (fileData.offsetPos+calcAroundRight > (fileSize-1)) {
+    calcAroundRight -= ( (fileData.offsetPos+calcAroundRight) - fileSize ); 
+  }
+  
+  long readSize = calcAroundLeft + calcAroundRight + 1;
   if (readSize > 1 && readSize > fileSize) {
     cout << "Invalid given offset around : \"" << fileData.offsetAround << "\" at filesize of \"" << fileSize << "\"\n";
     return CF_INVALID_OFFSET_AROUND;
   }
+  
   char buffer[readSize+1] = {0};
-  fseek(filePtr, fileData.offsetPos-fileData.offsetAround, SEEK_SET);
+
+  fseek(filePtr, fileData.offsetPos-calcAroundLeft, SEEK_SET);
   fread(buffer, sizeof(char), readSize, filePtr);
   cout << buffer << endl;
   fclose(filePtr);
   filePtr = nullptr;
+
   return CF_SUCCEES;
 }
-
+  
 int main(int argc, char *argv[])
 {
   inFileData fileData = readFileData(argc, argv);
