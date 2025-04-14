@@ -74,12 +74,16 @@ int printFileOffset(const inFileData& fileData) {
   if (fileData.offsetPos-calcAroundLeft < 0) {
     calcAroundLeft -= ( (fileData.offsetPos-calcAroundLeft)  * -1 ); 
   }
-  if (fileData.offsetPos+calcAroundRight > (fileSize-1)) {
-    calcAroundRight -= ( (fileData.offsetPos+calcAroundRight) - fileSize ); 
+  if (fileData.offsetPos+calcAroundRight >= fileSize) {
+    calcAroundRight -= ( ((fileData.offsetPos+1)+calcAroundRight) - fileSize ); 
   }
   long readSize = calcAroundLeft + calcAroundRight + 1;
   if (readSize > 1 && readSize > fileSize) {
-    cout << "Invalid given offset around : \"" << fileData.offsetAround << "\" at filesize of \"" << fileSize << "\"\n";
+    cout << "Invalid given offset around : \"";
+    cout << fileData.offsetAround;
+    cout << "\" at filesize of \"";
+    cout << fileSize;
+    cout << "\"\n";
     return CF_INVALID_OFFSET_AROUND;
   }
   char buffer[readSize+1] = {0};
@@ -99,7 +103,9 @@ int main(int argc, char *argv[])
     return CF_ERROR_INVALID_ARGS;
   }
   if (!filesystem::exists(fileData.path)) {
-    cout << "File \"" << fileData.path << "\" doesnt exists\n";
+    cout << "File \"";
+    cout << fileData.path;
+    cout << "\" doesnt exists\n";
     return CF_ERROR_NOTEXISTS;
   }
   return printFileOffset(fileData);
