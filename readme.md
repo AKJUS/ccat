@@ -19,6 +19,6 @@ task.
 - .
 - Param **-o:** Offset of file which should printed out
 - Param **-a:** How many chars before and after should printed out too
-- Param **-c:** Color to mark char at offset, bold, red, gree or blue
+- Param **-c:** Color to mark char at offset, bold, red, green or blue
 - .
 - FilePath: Path to file you want printed out
