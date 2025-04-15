@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <algorithm>
 #include <filesystem>
@@ -54,9 +55,9 @@ inFileData readFileData(int argc, char*argv[]) {
     }
     else if (argument.substr(0,3) == "-c:") 
       fileData.offsetColor = argument.substr(3, argument.length());
-    else if (argument.substr(0,3) == "-RAW")
+    else if (argument.substr(0,4) == "-RAW")
       fileData.printFormat = outFormat::RAW;
-    else if (argument.substr(0,3) == "-HEX")
+    else if (argument.substr(0,4) == "-HEX")
       fileData.printFormat = outFormat::HEX;
     else
       fileData.path = argument;
@@ -105,7 +106,29 @@ void printOffset(const inFileData& fileData, long reqOffsetMark, char *reqOffset
     cout << endl;
   }
   else if (fileData.printFormat == outFormat::HEX) {
-    //TODO
+    auto chexVal = [](const auto& c){
+      stringstream ost;
+      ost << setw(2);
+      ost << setfill('0');
+      ost << hex << int{c};
+      string result{ost.str()};
+      transform(result.begin(), result.end(), result.begin(),
+		 [](unsigned char c){ return toupper(c); });
+      return result;
+    };
+    for (long i = 0; i < reqOffsetBufferLength; ++i) {
+      if (i)
+	cout << " ";
+      if (i != reqOffsetMark)
+	cout << chexVal(reqOffsetBuffer[i]);
+      else if (i == reqOffsetMark) {
+	cout << getColorCode(fileData.offsetColor);
+	cout << chexVal(reqOffsetBuffer[i]);
+	cout << cBoldOff;
+	cout << cNormal;
+      }
+    }
+    cout << endl;
   }
 }
 
