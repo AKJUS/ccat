@@ -14,6 +14,10 @@ const int CF_ERROR_OPEN = -3;
 const int CF_INVALID_OFFSET = -4;
 const int CF_INVALID_OFFSET_AROUND = -5;
 
+const char cNormal[]  = "\033[0m";
+const char cBoldOn[]  = "\e[1m";
+const char cBoldOff[] = "\e[0m";
+
 enum outFormat {
   RAW,
   HEX
@@ -23,6 +27,7 @@ struct inFileData {
   string path;
   long offsetPos;
   long offsetAround;
+  string offsetColor;
   outFormat printFormat;
   bool isComplete;
 };
@@ -31,6 +36,7 @@ inFileData readFileData(int argc, char*argv[]) {
   inFileData fileData;
   fileData.offsetPos = -1;
   fileData.offsetAround = 0;
+  fileData.offsetColor = cBoldOn;
   fileData.printFormat = outFormat::RAW;
   fileData.isComplete = false;
   for (auto i = 1; i < argc; ++i) {
@@ -42,6 +48,8 @@ inFileData readFileData(int argc, char*argv[]) {
       if (fileData.offsetAround < 0)
 	fileData.offsetAround *= -1;
     }
+    else if (argument.substr(0,3) == "-c:") 
+      fileData.offsetColor = argument.substr(3, argument.length());
     else if (argument.substr(0,3) == "-RAW")
       fileData.printFormat = outFormat::RAW;
     else if (argument.substr(0,3) == "-HEX")
@@ -54,7 +62,23 @@ inFileData readFileData(int argc, char*argv[]) {
 }
 
 void printHelp() {
-  cout << "ccat -o:<offset> -a:<around> -<RAW,HEX> <file> \n";
+  cout << "ccat -o:<offset> -a:<around> -c:<color> -<RAW,HEX> <file>\n";
+}
+
+void printOffset(const inFileData& fileData, long reqOffsetMark, char *reqOffsetBuffer, long reqOffsetBufferLength) {
+  if (fileData.printFormat == outFormat::RAW) {
+    for (long i = 0; i < reqOffsetBufferLength; ++i) {
+      if (i != reqOffsetMark)
+	cout << reqOffsetBuffer[i];
+      else if (i == reqOffsetMark) {
+	cout << fileData.offsetColor;
+	cout << reqOffsetBuffer[i];
+	cout << cBoldOff;
+	cout << cNormal;
+      }
+    }
+    cout << endl;
+  }
 }
 
 int printFileOffset(const inFileData& fileData) {
@@ -89,9 +113,9 @@ int printFileOffset(const inFileData& fileData) {
   char buffer[readSize+1] = {0};
   fseek(filePtr, fileData.offsetPos-calcAroundLeft, SEEK_SET);
   fread(buffer, sizeof(char), readSize, filePtr);
-  cout << buffer << endl;
   fclose(filePtr);
   filePtr = nullptr;
+  printOffset(fileData, calcAroundLeft, buffer, readSize);
   return CF_SUCCEES;
 }
   
