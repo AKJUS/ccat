@@ -12,3 +12,11 @@ sometimes this great command line tools are a little oversized for me and
 and i like to code in C++. So why not a tiny tool like this to solve this  
 task.
 
+
+## How to use
+
+- **ccat** -o:7546 -a:10 -c:bold tst.txt
+- Param **-o:**nnnnnn : Offset of file which should printed out
+- Param **-a:**nnnnnn : How many chars before and after should printed out too
+- Param **-c:**color  : Color to mark char at offset, bold, red, gree or blue
+- Param PathToFile: Path to file you want printed out
