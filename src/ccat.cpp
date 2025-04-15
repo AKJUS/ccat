@@ -36,7 +36,7 @@ inFileData readFileData(int argc, char*argv[]) {
   inFileData fileData;
   fileData.offsetPos = -1;
   fileData.offsetAround = 0;
-  fileData.offsetColor = cBoldOn;
+  fileData.offsetColor = "";
   fileData.printFormat = outFormat::RAW;
   fileData.isComplete = false;
   for (auto i = 1; i < argc; ++i) {
@@ -61,8 +61,22 @@ inFileData readFileData(int argc, char*argv[]) {
   return fileData;
 }
 
+string getColorCode(const string& colorStr) {
+  if (colorStr == "bold")
+    return cBoldOn;
+  return "";
+}
+
 void printHelp() {
-  cout << "ccat -o:<offset> -a:<around> -c:<color> -<RAW,HEX> <file>\n";
+  cout << "-----------------------------------------------------------------------\n";
+  cout << "ccat -o:<offset> -a:<around> -c:<bold,red,green,blue> -<RAW,HEX> <file>\n";
+  cout << "-----------------------------------------------------------------------\n";
+  cout << " -o<offset>      : Zero based offset\n";
+  cout << " -a<around>      : Max count char before and after offset print out too\n";
+  cout << " -c<bold,red,..> : Mark color for char at requested offset\n";
+  cout << " -RAW            : Normal raw value printed out, thats the default\n";
+  cout << " -HEX            : Value printed outed as Hexvalue\n";
+  cout << endl;
 }
 
 void printOffset(const inFileData& fileData, long reqOffsetMark, char *reqOffsetBuffer, long reqOffsetBufferLength) {
@@ -71,7 +85,7 @@ void printOffset(const inFileData& fileData, long reqOffsetMark, char *reqOffset
       if (i != reqOffsetMark)
 	cout << reqOffsetBuffer[i];
       else if (i == reqOffsetMark) {
-	cout << fileData.offsetColor;
+	cout << getColorCode(fileData.offsetColor);
 	cout << reqOffsetBuffer[i];
 	cout << cBoldOff;
 	cout << cNormal;
