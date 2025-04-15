@@ -68,14 +68,12 @@ string getColorCode(const string& colorStr) {
 }
 
 void printHelp() {
-  cout << "-----------------------------------------------------------------------\n";
-  cout << "ccat -o:<offset> -a:<around> -c:<bold,red,green,blue> -<RAW,HEX> <file>\n";
-  cout << "-----------------------------------------------------------------------\n";
-  cout << " -o<offset>      : Zero based offset\n";
-  cout << " -a<around>      : Max count char before and after offset print out too\n";
-  cout << " -c<bold,red,..> : Mark color for char at requested offset\n";
-  cout << " -RAW            : Normal raw value printed out, thats the default\n";
-  cout << " -HEX            : Value printed outed as Hexvalue\n";
+  cout << "\nccat -o:<offset> -a:<around> -c:<bold,red,green,blue> -<RAW,HEX> <file>\n\n";
+  cout << "  -o<offset>      : Zero based offset\n";
+  cout << "  -a<around>      : Max count char before and after offset print out too\n";
+  cout << "  -c<bold,red,..> : Mark color for char at requested offset\n";
+  cout << "  -RAW            : Normal raw value printed out, thats the default\n";
+  cout << "  -HEX            : Value printed outed as Hexvalue\n";
   cout << endl;
 }
 
