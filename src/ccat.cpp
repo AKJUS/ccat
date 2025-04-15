@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <filesystem>
 
 using namespace std;
@@ -62,7 +63,10 @@ inFileData readFileData(int argc, char*argv[]) {
 }
 
 string getColorCode(const string& colorStr) {
-  if (colorStr == "bold")
+  string sColor{colorStr};
+  transform(sColor.begin(), sColor.end(), sColor.begin(),
+		 [](unsigned char c){ return tolower(c); });
+  if (sColor  == "bold")
     return cBoldOn;
   return "";
 }
