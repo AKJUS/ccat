@@ -69,14 +69,14 @@ inFileData readFileData(int argc, char*argv[]) {
 string getColorCode(const string& colorStr) {
   string sColor{colorStr};
   transform(sColor.begin(), sColor.end(), sColor.begin(),
-		 [](unsigned char c){ return tolower(c); });
-  if (sColor  == "bold")
+	    [](unsigned char c){return tolower(c);});
+  if (sColor == "bold")
     return cBoldOn;
-  if (sColor  == "red")
+  if (sColor == "red")
     return cRed;
-  if (sColor  == "green")
+  if (sColor == "green")
     return cGreen;
-  if (sColor  == "blue")
+  if (sColor == "blue")
     return cBlue;
   return "";
 }
@@ -91,7 +91,8 @@ void printHelp() {
   cout << endl;
 }
 
-void printOffset(const inFileData& fileData, long reqOffsetMark, char *reqOffsetBuffer, long reqOffsetBufferLength) {
+void printOffsetBuffer(const inFileData& fileData, long reqOffsetMark,
+		       char *reqOffsetBuffer, long reqOffsetBufferLength) {
   if (fileData.printFormat == outFormat::RAW) {
     for (long i = 0; i < reqOffsetBufferLength; ++i) {
       if (i != reqOffsetMark)
@@ -113,7 +114,7 @@ void printOffset(const inFileData& fileData, long reqOffsetMark, char *reqOffset
       ost << hex << int{c};
       string result{ost.str()};
       transform(result.begin(), result.end(), result.begin(),
-		 [](unsigned char c){ return toupper(c); });
+		[](unsigned char c){ return toupper(c); });
       return result;
     };
     for (long i = 0; i < reqOffsetBufferLength; ++i) {
@@ -166,7 +167,7 @@ int printFileOffset(const inFileData& fileData) {
   fread(buffer, sizeof(char), readSize, filePtr);
   fclose(filePtr);
   filePtr = nullptr;
-  printOffset(fileData, calcAroundLeft, buffer, readSize);
+  printOffsetBuffer(fileData, calcAroundLeft, buffer, readSize);
   return CF_SUCCEES;
 }
   
