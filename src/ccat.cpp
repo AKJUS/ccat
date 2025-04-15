@@ -16,6 +16,9 @@ const int CF_INVALID_OFFSET = -4;
 const int CF_INVALID_OFFSET_AROUND = -5;
 
 const char cNormal[]  = "\033[0m";
+const char cRed[]     = "\x1b[1;31m";
+const char cGreen[]   = "\x1b[1;32m";
+const char cBlue[]    = "\x1b[1;34m";
 const char cBoldOn[]  = "\e[1m";
 const char cBoldOff[] = "\e[0m";
 
@@ -68,6 +71,12 @@ string getColorCode(const string& colorStr) {
 		 [](unsigned char c){ return tolower(c); });
   if (sColor  == "bold")
     return cBoldOn;
+  if (sColor  == "red")
+    return cRed;
+  if (sColor  == "green")
+    return cGreen;
+  if (sColor  == "blue")
+    return cBlue;
   return "";
 }
 
