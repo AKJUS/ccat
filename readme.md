@@ -12,6 +12,8 @@ sometimes this great command line tools are a little oversized for me and
 and i like to code in C++. So why not a tiny tool like this to solve this  
 task.
 
+## Looks like
+[![Watch the video](https://i.ytimg.com/vi/NIph9nzp0z4/hqdefault.jpg)](https://www.youtube.com/watch?v=NIph9nzp0z4)
 
 ## How to use
 
