@@ -95,6 +95,9 @@ void printOffset(const inFileData& fileData, long reqOffsetMark, char *reqOffset
     }
     cout << endl;
   }
+  else if (fileData.printFormat == outFormat::HEX) {
+    //TODO
+  }
 }
 
 int printFileOffset(const inFileData& fileData) {
