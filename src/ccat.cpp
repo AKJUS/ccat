@@ -25,7 +25,8 @@ const char cBoldOff[] = "\e[0m";
 
 enum outFormat {
   RAW,
-  HEX
+  HEX,
+  HTABLE
 };
 
 struct inFileData {
@@ -34,31 +35,39 @@ struct inFileData {
   long offsetAround;
   string offsetColor;
   outFormat printFormat;
+  long columnsCount;
   bool isComplete;
+  inFileData() {
+    offsetPos = -1;
+    offsetAround = 0;
+    offsetColor = "";
+    printFormat = outFormat::RAW;
+    columnsCount = 10;
+    isComplete = false;
+  }
 };
 
 inFileData readFileData(int argc, char*argv[]) {
   inFileData fileData;
-  fileData.offsetPos = -1;
-  fileData.offsetAround = 0;
-  fileData.offsetColor = "";
-  fileData.printFormat = outFormat::RAW;
-  fileData.isComplete = false;
   for (auto i = 1; i < argc; ++i) {
     string argument {argv[i]};
-    if (argument.substr(0,3) == "-o:")
+    if (argument.length() >= 3 && argument.substr(0,3) == "-o:")
       fileData.offsetPos = stol(argument.substr(3, argument.length()));
-    else if (argument.substr(0,3) == "-a:") {
+    else if (argument.length() >= 3 && argument.substr(0,3) == "-a:") {
       fileData.offsetAround = stol(argument.substr(3, argument.length()));
       if (fileData.offsetAround < 0)
 	fileData.offsetAround *= -1;
     }
-    else if (argument.substr(0,3) == "-c:") 
+    else if (argument.length() >= 3 && argument.substr(0,3) == "-c:") 
       fileData.offsetColor = argument.substr(3, argument.length());
-    else if (argument.substr(0,4) == "-RAW")
+    else if (argument.length() >= 4 && argument.substr(0,4) == "-tc:")
+      fileData.columnsCount = stol(argument.substr(4, argument.length()));
+    else if (argument.length() >= 4 && argument.substr(0,4) == "-RAW")
       fileData.printFormat = outFormat::RAW;
-    else if (argument.substr(0,4) == "-HEX")
+    else if (argument.length() >= 4 && argument.substr(0,4) == "-HEX")
       fileData.printFormat = outFormat::HEX;
+    else if (argument.length() >= 7 && argument.substr(0,7) == "-HTABLE")
+      fileData.printFormat = outFormat::HTABLE;
     else
       fileData.path = argument;
   }
@@ -82,12 +91,67 @@ string getColorCode(const string& colorStr) {
 }
 
 void printHelp() {
-  cout << "\nccat -o:<offset> -a:<around> -c:<bold,red,green,blue> -<RAW,HEX> <file>\n\n";
-  cout << "  -o<offset>      : Zero based offset\n";
-  cout << "  -a<around>      : Max count char before and after offset print out too\n";
-  cout << "  -c<bold,red,..> : Mark color for char at requested offset\n";
-  cout << "  -RAW            : Normal raw value printed out, thats the default\n";
-  cout << "  -HEX            : Value printed outed as Hexvalue\n";
+  cout << "\nccat -o:<offset> -a:<around> -c:<bold,red,green,blue> -<RAW,HEX,HTABLE> <file>\n\n";
+  cout << "  -o<offset>        : Zero based offset\n";
+  cout << "  -a<around>        : Max count char before and after offset print out too\n";
+  cout << "  -c<bold,red,..>   : Mark color for char at requested offset\n";
+  cout << "  -tc<tableColCount>: Hextable columncount";
+  cout << "  -RAW              : Normal raw value printed out, thats the default\n";
+  cout << "  -HEX              : Value printed outed as Hexvalue\n";
+  cout << "  -HTABLE           : Value printed outed as Hexvalue as table\n";
+  cout << endl;
+}
+
+string chexVal(const auto& c){
+  stringstream ost;
+  ost << setw(2);
+  ost << setfill('0');
+  ost << hex << int{c};
+  string result{ost.str()};
+  transform(result.begin(), result.end(), result.begin(),
+	    [](unsigned char c){ return toupper(c); });
+  return result;
+}
+
+void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
+				 char *reqOffsetBuffer, long reqOffsetBufferLength) {
+  auto rowCount = reqOffsetBufferLength / fileData.columnsCount;
+  if (reqOffsetBufferLength % fileData.columnsCount)
+    rowCount++;
+
+  long realStartOffset = fileData.offsetPos-reqOffsetMark;
+    
+  for (long r = 0; r < rowCount;  ++r) {
+    if (!r) {
+      cout << "      ";
+      for (long ci = 0; ci < fileData.columnsCount; ++ci) {
+	if (ci)
+	  cout << " ";
+	cout << setw(2) << setfill('0') << ci;
+      }
+      cout << endl;
+    }
+
+    cout << setw(5) << setfill('0') << realStartOffset << " ";
+
+    auto outCount = r*fileData.columnsCount; 
+    
+    for (long c = 0; ((c < fileData.columnsCount) && ((outCount+c) < reqOffsetBufferLength)); ++c) {
+      if (c)
+	cout << " ";
+      if (outCount+c != reqOffsetMark)
+	cout << chexVal(reqOffsetBuffer[outCount+c]);
+      else if ((outCount+c) == reqOffsetMark) {
+	cout << getColorCode(fileData.offsetColor);
+	cout << chexVal(reqOffsetBuffer[outCount+c]);
+	cout << cBoldOff;
+	cout << cNormal;
+      }
+    }
+
+    realStartOffset += fileData.columnsCount;
+    cout << endl;
+  }
   cout << endl;
 }
 
@@ -107,16 +171,6 @@ void printOffsetBuffer(const inFileData& fileData, long reqOffsetMark,
     cout << endl;
   }
   else if (fileData.printFormat == outFormat::HEX) {
-    auto chexVal = [](const auto& c){
-      stringstream ost;
-      ost << setw(2);
-      ost << setfill('0');
-      ost << hex << int{c};
-      string result{ost.str()};
-      transform(result.begin(), result.end(), result.begin(),
-		[](unsigned char c){ return toupper(c); });
-      return result;
-    };
     for (long i = 0; i < reqOffsetBufferLength; ++i) {
       if (i)
 	cout << " ";
@@ -131,6 +185,8 @@ void printOffsetBuffer(const inFileData& fileData, long reqOffsetMark,
     }
     cout << endl;
   }
+  else if (fileData.printFormat == outFormat::HTABLE)
+    printOffsetBufferAsHexTable(fileData, reqOffsetMark, reqOffsetBuffer, reqOffsetBufferLength);
 }
 
 int printFileOffset(const inFileData& fileData) {
