@@ -22,5 +22,9 @@ task.
 - Param **-o:** Offset of file which should printed out
 - Param **-a:** How many chars before and after should printed out too
 - Param **-c:** Color to mark char at offset, bold, red, green or blue
+- Param **-tc:** Columncount for hextable
+- Param **-HEX** Plain hex output
+- Param **-HTABLE** Hextable output
+- Param **-RAW** Plain text output
 - .
 - FilePath: Path to file you want printed out
