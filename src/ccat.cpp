@@ -91,14 +91,14 @@ string getColorCode(const string& colorStr) {
 }
 
 void printHelp() {
-  cout << "\nccat -o:<offset> -a:<around> -c:<bold,red,green,blue> -<RAW,HEX,HTABLE> <file>\n\n";
-  cout << "  -o<offset>        : Zero based offset\n";
-  cout << "  -a<around>        : Max count char before and after offset print out too\n";
-  cout << "  -c<bold,red,..>   : Mark color for char at requested offset\n";
-  cout << "  -tc<tableColCount>: Hextable columncount";
-  cout << "  -RAW              : Normal raw value printed out, thats the default\n";
-  cout << "  -HEX              : Value printed outed as Hexvalue\n";
-  cout << "  -HTABLE           : Value printed outed as Hexvalue as table\n";
+  cout << "\nccat -o:<offset> -a:<around> -c:<bold,red,green,blue> -tc:<colCount> -<RAW,HEX,HTABLE> <file>\n\n";
+  cout << "  -o:<offset>         : Zero based offset\n";
+  cout << "  -a:<around>         : Max count char before and after offset print out too\n";
+  cout << "  -c:<bold,red,..>    : Mark color for char at requested offset\n";
+  cout << "  -tc:<tableColCount> : Hextable columncount\n";
+  cout << "  -RAW                : Normal raw value printed out, thats the default\n";
+  cout << "  -HEX                : Value printed outed as Hexvalue\n";
+  cout << "  -HTABLE             : Value printed outed as Hexvalue as table\n";
   cout << endl;
 }
 
@@ -118,9 +118,7 @@ void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
   auto rowCount = reqOffsetBufferLength / fileData.columnsCount;
   if (reqOffsetBufferLength % fileData.columnsCount)
     rowCount++;
-
   long realStartOffset = fileData.offsetPos-reqOffsetMark;
-    
   for (long r = 0; r < rowCount;  ++r) {
     if (!r) {
       cout << "      ";
@@ -131,11 +129,8 @@ void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
       }
       cout << endl;
     }
-
     cout << setw(5) << setfill('0') << realStartOffset << " ";
-
     auto outCount = r*fileData.columnsCount; 
-    
     for (long c = 0; ((c < fileData.columnsCount) && ((outCount+c) < reqOffsetBufferLength)); ++c) {
       if (c)
 	cout << " ";
@@ -148,7 +143,6 @@ void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
 	cout << cNormal;
       }
     }
-
     realStartOffset += fileData.columnsCount;
     cout << endl;
   }
