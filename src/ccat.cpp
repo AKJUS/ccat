@@ -122,7 +122,7 @@ void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
   auto rowCount = reqOffsetBufferLength / fileData.columnsCount;
   if (reqOffsetBufferLength % fileData.columnsCount)
     rowCount++;
-  long realStartOffset = fileData.offsetPos-reqOffsetMark;
+  long startOffset {0};
   for (long r = 0; r < rowCount;  ++r) {
     if (!r) {
       cout << "      ";
@@ -133,7 +133,7 @@ void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
       }
       cout << endl;
     }
-    cout << setw(5) << setfill('0') << realStartOffset << " ";
+    cout << setw(5) << setfill('0') << startOffset << " ";
     auto outCount = r*fileData.columnsCount; 
     for (long c = 0; ((c < fileData.columnsCount) && ((outCount+c) < reqOffsetBufferLength)); ++c) {
       if (c)
@@ -147,7 +147,7 @@ void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
 	cout << cNormal;
       }
     }
-    realStartOffset += fileData.columnsCount;
+    startOffset += fileData.columnsCount;
     cout << endl;
   }
 }
