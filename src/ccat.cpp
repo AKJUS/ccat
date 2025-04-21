@@ -15,6 +15,7 @@ const int CF_ERROR_NOTEXISTS = -2;
 const int CF_ERROR_OPEN = -3;
 const int CF_INVALID_OFFSET = -4;
 const int CF_INVALID_OFFSET_AROUND = -5;
+const int CF_INVALID_BUFFER_SIZE_FOR_HTABLE = -6;
 
 const char cNormal[]  = "\033[0m";
 const char cRed[]     = "\x1b[1;31m";
@@ -22,6 +23,9 @@ const char cGreen[]   = "\x1b[1;32m";
 const char cBlue[]    = "\x1b[1;34m";
 const char cBoldOn[]  = "\e[1m";
 const char cBoldOff[] = "\e[0m";
+
+const long MAX_HTABLE_BUFFER_SIZE = 100000;
+const int  MAX_HTABLE_COLUMN_COUNT = 60;
 
 enum outFormat {
   RAW,
@@ -146,7 +150,6 @@ void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
     realStartOffset += fileData.columnsCount;
     cout << endl;
   }
-  cout << endl;
 }
 
 void printOffsetBuffer(const inFileData& fileData, long reqOffsetMark,
@@ -212,6 +215,22 @@ int printFileOffset(const inFileData& fileData) {
     cout << "\"\n";
     return CF_INVALID_OFFSET_AROUND;
   }
+
+  if (fileData.printFormat == outFormat::HTABLE) {
+    if (readSize > 1 && readSize > MAX_HTABLE_BUFFER_SIZE) {
+      cout << "Invalid readsize for HTABLE-format : \"";
+      cout << readSize;
+      cout << "\"\n";
+      return CF_INVALID_BUFFER_SIZE_FOR_HTABLE;
+    }
+    if (fileData.columnsCount > MAX_HTABLE_COLUMN_COUNT) {
+      cout << "Invalid columncount : \"";
+      cout << fileData.columnsCount;
+      cout << "\"\nMax. 60 columns are supported!\n";
+      return CF_INVALID_BUFFER_SIZE_FOR_HTABLE;
+    }
+  }
+  
   char buffer[readSize+1] = {0};
   fseek(filePtr, fileData.offsetPos-calcAroundLeft, SEEK_SET);
   fread(buffer, sizeof(char), readSize, filePtr);
