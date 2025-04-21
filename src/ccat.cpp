@@ -215,7 +215,6 @@ int printFileOffset(const inFileData& fileData) {
     cout << "\"\n";
     return CF_INVALID_OFFSET_AROUND;
   }
-
   if (fileData.printFormat == outFormat::HTABLE) {
     if (readSize > 1 && readSize > MAX_HTABLE_BUFFER_SIZE) {
       cout << "Invalid readsize for HTABLE-format : \"";
@@ -230,7 +229,6 @@ int printFileOffset(const inFileData& fileData) {
       return CF_INVALID_BUFFER_SIZE_FOR_HTABLE;
     }
   }
-  
   char buffer[readSize+1] = {0};
   fseek(filePtr, fileData.offsetPos-calcAroundLeft, SEEK_SET);
   fread(buffer, sizeof(char), readSize, filePtr);
