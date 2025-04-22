@@ -11,8 +11,6 @@ CXXFLAGS=-std=c++20 -Wall -Werror
 CXXFLAGSREL=$(CXXFLAGS) -O2 -s -g0 -DNDEBUG
 CXXFLAGSDEB=$(CXXFLAGS) -O0 -g -DDEBUG
 
-LDLIBS=
-
 .PHONY: all
 
 all: clean debug
@@ -20,14 +18,14 @@ all: clean debug
 debug:
 	@mkdir -p $(OUTDIRBIN)
 	@echo "Compile : $(MAINSRC) -> $(OUTDIRBIN)/$(PRJNAME)"
-	@ $(CXX) $(CXXFLAGSDEB) -o $(OUTDIRBIN)/$(PRJNAME) $(MAINSRC) $(LDLIBS)
+	@ $(CXX) $(CXXFLAGSDEB) -o $(OUTDIRBIN)/$(PRJNAME) $(MAINSRC)
 	@mkdir -p $(DEPDIR)
 	@ cp $(OUTDIRBIN)/$(PRJNAME) $(DEPDIR) 
 
-release: clean
+release:clean
 	@mkdir -p $(OUTDIRBIN)
 	@echo "Compile : $(MAINSRC) -> $(OUTDIRBIN)/$(PRJNAME)"
-	@ $(CXX) $(CXXFLAGSREL) -o $(OUTDIRBIN)/$(PRJNAME) $(MAINSRC) $(LDLIBS)
+	@ $(CXX) $(CXXFLAGSREL) -o $(OUTDIRBIN)/$(PRJNAME) $(MAINSRC)
 	@mkdir -p $(DEPDIR)
 	@ cp $(OUTDIRBIN)/$(PRJNAME) $(DEPDIR) 
 
