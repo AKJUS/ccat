@@ -7,10 +7,10 @@ I have huge json and other text files and i have to look sometimes is
 something wrong with this files. For example json reader raised exceptions  
 and so on. And then i have to look why. And for this case i wrote this  
 small tool.  
-I know i can you existing great tools like sed and awk and so on. But  
+I know i can use all existing great tools like sed and awk and so on. But  
 sometimes this great command line tools are a little oversized for me and  
-and i like to code in C++. So why not a tiny tool like this to solve this  
-task.
+and i like to code in C++. So why not to implement a tiny tool like this  
+to solve this task.
 
 ## Looks like
 [![Watch the video](https://i.ytimg.com/vi/NIph9nzp0z4/hqdefault.jpg)](https://www.youtube.com/watch?v=NIph9nzp0z4)
