@@ -117,7 +117,7 @@ string hexValOfCharacter(const auto& c){
 }
 
 void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
-				 char *reqOffsetBuffer, long reqOffsetBufferLength) {
+				 const char *reqOffsetBuffer, long reqOffsetBufferLength) {
   auto rowCount = reqOffsetBufferLength / fileData.columnsCount;
   if (reqOffsetBufferLength % fileData.columnsCount)
     rowCount++;
