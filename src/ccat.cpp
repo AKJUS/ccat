@@ -106,7 +106,7 @@ void printHelp() {
   cout << endl;
 }
 
-string chexVal(const auto& c){
+string hexValOfCharacter(const auto& c){
   stringstream ost;
   ost << uppercase;
   ost << setw(2);
@@ -138,10 +138,10 @@ void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
       if (c)
 	cout << " ";
       if (outCount+c != reqOffsetMark)
-	cout << chexVal(reqOffsetBuffer[outCount+c]);
+	cout << hexValOfCharacter(reqOffsetBuffer[outCount+c]);
       else if ((outCount+c) == reqOffsetMark) {
 	cout << getColorCode(fileData.offsetColor);
-	cout << chexVal(reqOffsetBuffer[outCount+c]);
+	cout << hexValOfCharacter(reqOffsetBuffer[outCount+c]);
 	cout << cBoldOff;
 	cout << cNormal;
       }
@@ -171,10 +171,10 @@ void printOffsetBuffer(const inFileData& fileData, long reqOffsetMark,
       if (i)
 	cout << " ";
       if (i != reqOffsetMark)
-	cout << chexVal(reqOffsetBuffer[i]);
+	cout << hexValOfCharacter(reqOffsetBuffer[i]);
       else if (i == reqOffsetMark) {
 	cout << getColorCode(fileData.offsetColor);
-	cout << chexVal(reqOffsetBuffer[i]);
+	cout << hexValOfCharacter(reqOffsetBuffer[i]);
 	cout << cBoldOff;
 	cout << cNormal;
       }
