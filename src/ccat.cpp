@@ -43,7 +43,6 @@ struct inFileData {
   inFileData() {
     offsetPos = -1;
     offsetAround = 0;
-    offsetColor = "";
     printFormat = outFormat::RAW;
     columnsCount = 10;
     isComplete = false;
