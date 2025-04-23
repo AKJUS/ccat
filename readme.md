@@ -17,7 +17,7 @@ to solve this task.
 
 ## How to use
 
-- **ccat** -o:7546 -a:10 -c:bold tst.txt
+- **ccat** -o:2 -a:1 -c:bold tst/tst.txt
 - .
 - Param **-o:** Offset of file which should printed out
 - Param **-a:** How many chars before and after should printed out too
