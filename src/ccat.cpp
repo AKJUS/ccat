@@ -108,13 +108,12 @@ void printHelp() {
 
 string chexVal(const auto& c){
   stringstream ost;
+  ost << uppercase;
   ost << setw(2);
   ost << setfill('0');
-  ost << hex << int{c};
-  string result{ost.str()};
-  transform(result.begin(), result.end(), result.begin(),
-	    [](unsigned char c){ return toupper(c); });
-  return result;
+  ost << hex;
+  ost << int{c};
+  return ost.str();
 }
 
 void printOffsetBufferAsHexTable(const inFileData& fileData, long reqOffsetMark,
